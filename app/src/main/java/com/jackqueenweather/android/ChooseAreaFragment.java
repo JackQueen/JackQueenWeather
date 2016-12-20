@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +74,8 @@ public class ChooseAreaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.area_choose, container, false);
-        bind = ButterKnife.bind(view);
+        bind = ButterKnife.bind(this,view);
+        initListView();
         return view;
     }
 
@@ -86,8 +88,7 @@ public class ChooseAreaFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-
+        queryProvinces();
     }
 
     private void initListView() {
@@ -107,16 +108,16 @@ public class ChooseAreaFragment extends Fragment {
 
     @OnClick({R.id.btn_back,})
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_back:
-                getActivity().finish();
-                break;
-
+        if (currentLevel == LEVEL_COUNTY) {
+            queryCities();
+        } else if (currentLevel == LEVEL_CITY) {
+            queryProvinces();
         }
     }
+
     /**
      * 遍历查询中国省份信息,如果数据库查询不到则到服务器查询
-     * */
+     */
     private void queryProvinces() {
         tvTitle.setText("中国");
         btnBack.setVisibility(View.GONE);
@@ -130,7 +131,7 @@ public class ChooseAreaFragment extends Fragment {
             lvDaychoose.setSelection(0);
             currentLevel = LEVEL_PROVINCE;
         } else {
-            queryFromServer(Constant.HOST,"province");
+            queryFromServer(Constant.HOST, "province");
         }
     }
 
@@ -155,9 +156,10 @@ public class ChooseAreaFragment extends Fragment {
             queryFromServer(address, "city");
         }
     }
+
     /**
      * 查询某城市下的县级市,如果数据库无,就到服务器查询
-     * */
+     */
     private void queryCounties() {
         tvTitle.setText(selectedCity.getCityName());
         btnBack.setVisibility(View.VISIBLE);
@@ -173,7 +175,7 @@ public class ChooseAreaFragment extends Fragment {
         } else {
             int provinceCode = selectedProvince.getProvinceCode();
             int cityCode = selectedCity.getCityCode();
-            String address = Constant.HOST +provinceCode+"/"+ cityCode;
+            String address = Constant.HOST + provinceCode + "/" + cityCode;
             queryFromServer(address, "county");
         }
     }
@@ -198,7 +200,7 @@ public class ChooseAreaFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().toString();
+                String responseText = response.body().string();
                 boolean result = false;
                 switch (type) {
                     case "province":
@@ -233,20 +235,22 @@ public class ChooseAreaFragment extends Fragment {
             }
         });
     }
+
     /**
      * 显示进度对话框
-     * */
+     */
     private void showProgressDialog() {
         if (progressDialog == null) {
-             progressDialog = new ProgressDialog(getActivity());
+            progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage("正在加载...");
             progressDialog.setCanceledOnTouchOutside(false);
         }
         progressDialog.show();
     }
+
     /**
      * 关闭进度对话框
-     * */
+     */
     private void closeProgressDialog() {
         if (progressDialog != null) {
             progressDialog.dismiss();

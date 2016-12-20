@@ -1,6 +1,7 @@
 package com.jackqueenweather.android.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.jackqueenweather.android.model_db.City;
 import com.jackqueenweather.android.model_db.County;
@@ -20,10 +21,12 @@ public class GsonUtil {
      * 解析和处理服务器返回的省级数据
      * */
     public static boolean initProvinceJson(String json) {
-        if (!TextUtils.isEmpty(json)) {
 
+
+        if (!TextUtils.isEmpty(json)) {
             try {
                 JSONArray provinceArray = new JSONArray(json);
+
                 for (int i = 0; i < provinceArray.length(); i++) {
                     JSONObject provinceObject = provinceArray.getJSONObject(i);
                     Province province = new Province();
@@ -31,6 +34,7 @@ public class GsonUtil {
                     province.setProvinceCode(provinceObject.getInt("id"));
                     province.save();
                 }
+
                 return  true;
             } catch (JSONException e) {
                 e.printStackTrace();
