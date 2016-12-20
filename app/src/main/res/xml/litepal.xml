@@ -1,0 +1,12 @@
+<litepal>
+
+    <dbname value="jackqueen_weather"></dbname>
+    <version value="1" />
+    <list>
+        <mapping class="com.jackqueenweather.android.model_db.Province" />
+        <mapping class="com.jackqueenweather.android.model_db.City" />
+        <mapping class="com.jackqueenweather.android.model_db.County" />
+
+    </list>
+
+</litepal>
