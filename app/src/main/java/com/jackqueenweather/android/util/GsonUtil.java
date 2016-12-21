@@ -3,9 +3,11 @@ package com.jackqueenweather.android.util;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.jackqueenweather.android.model_db.City;
 import com.jackqueenweather.android.model_db.County;
 import com.jackqueenweather.android.model_db.Province;
+import com.jackqueenweather.android.model_gson.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,7 +22,7 @@ public class GsonUtil {
     /**
      * 解析和处理服务器返回的省级数据
      * */
-    public static boolean initProvinceJson(String json) {
+    public static boolean parseProvinceFrom(String json) {
 
 
         if (!TextUtils.isEmpty(json)) {
@@ -46,7 +48,7 @@ public class GsonUtil {
     /**
      * 解析和处理服务器返回的城市数据
      * */
-    public static boolean initCityJson(String json,int provinceId) {
+    public static boolean parseCityFrom(String json, int provinceId) {
         if (!TextUtils.isEmpty(json)) {
 
             try {
@@ -68,7 +70,7 @@ public class GsonUtil {
     }/**
      * 解析和处理服务器返回的县级数据
      * */
-    public static boolean initCountyJson(String json,int cityId) {
+    public static boolean parseCountyFrom(String json, int cityId) {
         if (!TextUtils.isEmpty(json)) {
 
             try {
@@ -87,5 +89,13 @@ public class GsonUtil {
             }
         }
         return false;
+    }
+
+    /**
+     * 解析天气详情信息Json
+     * */
+    public static Weather parseWeatherFrom(String response) {
+        Weather weather = new Gson().fromJson(response, Weather.class);
+        return weather;
     }
 }

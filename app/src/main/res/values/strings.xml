@@ -3,4 +3,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="comfort">舒适指数:  </string>
+    <string name="carwash">洗车指数:  </string>
+    <string name="sport">运动指数:  </string>
 </resources>

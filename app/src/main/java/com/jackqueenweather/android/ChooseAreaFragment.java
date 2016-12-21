@@ -2,10 +2,10 @@ package com.jackqueenweather.android;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,6 +102,15 @@ public class ChooseAreaFragment extends Fragment {
         if (currentLevel == LEVEL_PROVINCE) {
             selectedProvince = provinceList.get(position);
             queryCities();
+        } else if (currentLevel == LEVEL_CITY) {
+            selectedCity = cityList.get(position);
+            queryCounties();
+        } else if (currentLevel == LEVEL_COUNTY) {
+            String weatherId = countyList.get(position).getWeatherId();
+            Intent intent = new Intent(getActivity(), WeatherActivity.class);
+            intent.putExtra("weather_id",weatherId);
+            startActivity(intent);
+            getActivity().finish();
         }
     }
 
@@ -131,7 +140,7 @@ public class ChooseAreaFragment extends Fragment {
             lvDaychoose.setSelection(0);
             currentLevel = LEVEL_PROVINCE;
         } else {
-            queryFromServer(Constant.HOST, "province");
+            queryFromServer(Constant.AREA_HOST, "province");
         }
     }
 
@@ -152,7 +161,7 @@ public class ChooseAreaFragment extends Fragment {
             currentLevel = LEVEL_CITY;
         } else {//如果该省份没有子城市直接查询省份天气
             int provinceCode = selectedProvince.getProvinceCode();
-            String address = Constant.HOST + provinceCode;
+            String address = Constant.AREA_HOST + provinceCode;
             queryFromServer(address, "city");
         }
     }
@@ -163,7 +172,7 @@ public class ChooseAreaFragment extends Fragment {
     private void queryCounties() {
         tvTitle.setText(selectedCity.getCityName());
         btnBack.setVisibility(View.VISIBLE);
-        countyList = DataSupport.where("cityid=?", String.valueOf(selectedProvince.getId())).find(County.class);
+        countyList = DataSupport.where("cityid=?", String.valueOf(selectedCity.getId())).find(County.class);
         if (countyList.size() > 0) {
             dataList.clear();
             for (County county : countyList) {
@@ -175,7 +184,7 @@ public class ChooseAreaFragment extends Fragment {
         } else {
             int provinceCode = selectedProvince.getProvinceCode();
             int cityCode = selectedCity.getCityCode();
-            String address = Constant.HOST + provinceCode + "/" + cityCode;
+            String address = Constant.AREA_HOST + provinceCode + "/" + cityCode;
             queryFromServer(address, "county");
         }
     }
@@ -204,13 +213,13 @@ public class ChooseAreaFragment extends Fragment {
                 boolean result = false;
                 switch (type) {
                     case "province":
-                        result = GsonUtil.initProvinceJson(responseText);
+                        result = GsonUtil.parseProvinceFrom(responseText);
                         break;
                     case "city":
-                        result = GsonUtil.initCityJson(responseText, selectedProvince.getId());
+                        result = GsonUtil.parseCityFrom(responseText, selectedProvince.getId());
                         break;
                     case "county":
-                        result = GsonUtil.initCountyJson(responseText, selectedCity.getId());
+                        result = GsonUtil.parseCountyFrom(responseText, selectedCity.getId());
                         break;
                 }
                 if (result) {
