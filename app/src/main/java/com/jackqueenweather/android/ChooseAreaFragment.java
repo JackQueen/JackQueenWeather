@@ -74,7 +74,7 @@ public class ChooseAreaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.area_choose, container, false);
-        bind = ButterKnife.bind(this,view);
+        bind = ButterKnife.bind(this, view);
         initListView();
         return view;
     }
@@ -107,10 +107,17 @@ public class ChooseAreaFragment extends Fragment {
             queryCounties();
         } else if (currentLevel == LEVEL_COUNTY) {
             String weatherId = countyList.get(position).getWeatherId();
-            Intent intent = new Intent(getActivity(), WeatherActivity.class);
-            intent.putExtra("weather_id",weatherId);
-            startActivity(intent);
-            getActivity().finish();
+            if (getActivity() instanceof MainActivity) {
+                Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                intent.putExtra("weather_id", weatherId);
+                startActivity(intent);
+                getActivity().finish();
+            } else if (getActivity() instanceof WeatherActivity) {
+                WeatherActivity weatherActivity = (WeatherActivity) getActivity();
+                weatherActivity.drawerLayout.closeDrawers();
+                weatherActivity.swipeRefresh.setRefreshing(true);
+                weatherActivity.requesWeather(weatherId);
+            }
         }
     }
 
