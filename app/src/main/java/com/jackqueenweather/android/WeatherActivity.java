@@ -1,5 +1,6 @@
 package com.jackqueenweather.android;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Build;
@@ -8,6 +9,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import com.jackqueenweather.android.databinding.ForecastBinding;
 import com.jackqueenweather.android.databinding.WeatherBinding;
 import com.jackqueenweather.android.model_gson.Weather;
+import com.jackqueenweather.android.service.AutoUpdateService;
 import com.jackqueenweather.android.util.GsonUtil;
 import com.jackqueenweather.android.util.HttpUtil;
 import com.jackqueenweather.android.util.ImageUtil;
@@ -52,12 +55,14 @@ public class WeatherActivity extends AppCompatActivity {
     private WeatherBinding weatherBinding;
     private Weather.HeWeatherBean heWeatherBean;
     private Unbinder unbinder;
+
+
     private String weatherId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_weather);
+        //初始化沉浸式效果
         initImmerseBar();
         weatherBinding = DataBindingUtil.setContentView(this, R.layout.activity_weather);
         unbinder = ButterKnife.bind(this);
@@ -74,6 +79,10 @@ public class WeatherActivity extends AppCompatActivity {
                 requesWeather(weatherId);
             }
         });
+    }
+
+    public void setWeatherId(String weatherId) {
+        this.weatherId = weatherId;
     }
 
     private void initImmerseBar() {
@@ -139,7 +148,7 @@ public class WeatherActivity extends AppCompatActivity {
     /**
      * 根据地区的天气id请求天气信息
      */
-    public  void requesWeather(final String weatherId) {
+    public void requesWeather(final String weatherId) {
         String weatherUrl = Constant.WEATHER_HOST + weatherId + Constant.WEATHER_KEY;
         HttpUtil.getRequest(weatherUrl, new Callback() {
             @Override
@@ -165,6 +174,8 @@ public class WeatherActivity extends AppCompatActivity {
                         if (weather != null && "ok".equals(weather.getHeWeather().get(0).getStatus())) {
                             SPUtil.saveWeather(WeatherActivity.this, responseText);
                             showWeatherInfo(weather);
+                            Intent intent = new Intent(WeatherActivity.this, AutoUpdateService.class);
+                            startService(intent);
                         } else {
                             Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
                         }

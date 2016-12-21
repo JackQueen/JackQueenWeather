@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,20 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.jackqueenweather.android.model_db.City;
 import com.jackqueenweather.android.model_db.County;
 import com.jackqueenweather.android.model_db.Province;
 import com.jackqueenweather.android.util.GsonUtil;
 import com.jackqueenweather.android.util.HttpUtil;
-
+import com.jackqueenweather.android.util.ToastUtil;
 import org.litepal.crud.DataSupport;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -116,6 +113,7 @@ public class ChooseAreaFragment extends Fragment {
                 WeatherActivity weatherActivity = (WeatherActivity) getActivity();
                 weatherActivity.drawerLayout.closeDrawers();
                 weatherActivity.swipeRefresh.setRefreshing(true);
+                weatherActivity.setWeatherId(weatherId);
                 weatherActivity.requesWeather(weatherId);
             }
         }
@@ -205,13 +203,7 @@ public class ChooseAreaFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 //在主线程弹出Toast
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        closeProgressDialog();
-                        Toast.makeText(getActivity(), "加载失败", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                ToastUtil.showToast(getActivity(),"加载失败");
             }
 
             @Override
@@ -261,6 +253,7 @@ public class ChooseAreaFragment extends Fragment {
             progressDialog.setMessage("正在加载...");
             progressDialog.setCanceledOnTouchOutside(false);
         }
+
         progressDialog.show();
     }
 
