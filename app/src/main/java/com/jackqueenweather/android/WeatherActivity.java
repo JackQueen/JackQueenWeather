@@ -1,24 +1,29 @@
 package com.jackqueenweather.android;
 
 import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.jackqueenweather.android.databinding.ForecastBinding;
 import com.jackqueenweather.android.databinding.WeatherBinding;
 import com.jackqueenweather.android.model_gson.Weather;
 import com.jackqueenweather.android.util.GsonUtil;
 import com.jackqueenweather.android.util.HttpUtil;
+import com.jackqueenweather.android.util.ImageUtil;
 import com.jackqueenweather.android.util.SPUtil;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.RunnableFuture;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +38,8 @@ public class WeatherActivity extends AppCompatActivity {
     LinearLayout llForecastLayout;
     @BindView(R.id.scrollv_weather_layout)
     ScrollView scrollvWeatherLayout;
+    @BindView(R.id.iv_bg_pic)
+    ImageView ivBgPic;
     private WeatherBinding weatherBinding;
     private Weather.HeWeatherBean heWeatherBean;
     private Unbinder unbinder;
@@ -41,8 +48,53 @@ public class WeatherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_weather);
+        initImmerseBar();
         weatherBinding = DataBindingUtil.setContentView(this, R.layout.activity_weather);
         unbinder = ButterKnife.bind(this);
+        initWeatherInfo();
+        initBackgroundPic();
+    }
+
+    private void initImmerseBar() {
+        if (Build.VERSION.SDK_INT >= 21) {
+            View decorView = getWindow().getDecorView();
+            // "|"或运算
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);//透明色
+        }
+    }
+
+    private void initBackgroundPic() {
+        String backgPic = SPUtil.getBackgPic(WeatherActivity.this);
+        if (backgPic != null) {
+            ImageUtil.HelloImage(WeatherActivity.this,backgPic,ivBgPic);
+        }else {
+            loadingBackPic();
+        }
+    }
+
+    private void loadingBackPic() {
+        HttpUtil.getRequest(Constant.PIC_HOST, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String backgroundPic = response.body().string();
+                SPUtil.saveBackPic(WeatherActivity.this,backgroundPic);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ImageUtil.HelloImage(WeatherActivity.this, backgroundPic,ivBgPic);
+                    }
+                });
+            }
+        });
+    }
+
+    private void initWeatherInfo() {
         String weatherInfo = SPUtil.getWeather(WeatherActivity.this);
         if (weatherInfo != null) {
             //有缓存则直接解析
@@ -97,6 +149,7 @@ public class WeatherActivity extends AppCompatActivity {
                 });
             }
         });
+        loadingBackPic();
     }
 
     private void showWeatherInfo(Weather weather) {
