@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data class="WeatherBinding">
+
+        <import type="com.jackqueenweather.android.model_gson.Weather.HeWeatherBean" />
+
+        <variable
+            name="now"
+            type="HeWeatherBean.Now" />
+
+        <variable
+            name="basic"
+            type="HeWeatherBean.Basic" />
+
+        <variable
+            name="aqi"
+            type="HeWeatherBean.AQI" />
+
+        <variable
+            name="suggestion"
+            type="HeWeatherBean.Suggestion" />
+
+        <variable
+            name="forecast"
+            type="HeWeatherBean.DailyForecast" />
+
+    </data>
+
+    <FrameLayout
+
+        android:id="@+id/activity_weather"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/iv_bg_pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
+        <android.support.v4.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <ScrollView
+            android:id="@+id/scrollv_weather_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical">
+
+                <include
+                    layout="@layout/title"
+                    bind:basic="@{basic}" />
+
+                <include
+                    layout="@layout/now"
+                    bind:now="@{now}" />
+
+                <include layout="@layout/forecast" />
+
+                <include
+                    layout="@layout/aqi"
+                    bind:aqi="@{aqi}" />
+
+                <include
+                    layout="@layout/suggestion"
+                    bind:suggestion="@{suggestion}" />
+            </LinearLayout>
+        </ScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+            <fragment
+                android:id="@+id/fragment_choose_area_weainfo"
+                android:name="com.jackqueenweather.android.ChooseAreaFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"/>
+
+        </android.support.v4.widget.DrawerLayout>
+    </FrameLayout>
+</layout>
