@@ -7,5 +7,7 @@
     <string name="carwash">洗车指数:  </string>
     <string name="sport">运动指数:  </string>
     <string name="tem">°    </string>
+    <string name="picurl">http://guolin.tech/api/bing_pic</string>
+    <string name="update"> 更新于: </string>
 
 </resources>

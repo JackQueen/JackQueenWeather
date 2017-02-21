@@ -67,7 +67,7 @@ public class WeatherActivity extends AppCompatActivity {
         weatherBinding = DataBindingUtil.setContentView(this, R.layout.activity_weather);
         unbinder = ButterKnife.bind(this);
         initWeatherInfo();
-        initBackgroundPic();
+//        initBackgroundPic();
         initSwipeRefresh();
     }
 
@@ -185,7 +185,8 @@ public class WeatherActivity extends AppCompatActivity {
 
             }
         });
-        loadingBackPic();
+        //// TODO: 2016-12-22 关闭每日一图
+//        loadingBackPic();
     }
 
     /**

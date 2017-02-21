@@ -31,14 +31,14 @@
         android:text="@{basic.cityName}"
         />
 
-    <TextView
-        android:id="@+id/tv_title_update_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:text='@{basic.update.loc.split(" ")[1]}'
-        android:textSize="16sp"/>
+    <!--<TextView-->
+        <!--android:id="@+id/tv_title_update_time"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginRight="10dp"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:text='@{basic.update.loc.split(" ")[1]}'-->
+        <!--android:textSize="16sp"/>-->
 </RelativeLayout>
 </layout>

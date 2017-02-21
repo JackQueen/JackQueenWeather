@@ -11,25 +11,29 @@
     android:layout_height="wrap_content"
     android:layout_margin="15dp"
     android:orientation="vertical">
-
+<RelativeLayout
+    android:layout_gravity="center_horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
     <TextView
         android:id="@+id/tv_weather_info"
-        android:layout_gravity="center_horizontal"
+        android:layout_toRightOf="@+id/tv_degree"
+        android:layout_alignBaseline="@+id/tv_degree"
         android:textColor="@color/commonWhite"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawableRight="@{now.more.code}"
         android:text="@{now.more.txt}"/>
 
     <TextView
         android:id="@+id/tv_degree"
-        android:layout_gravity="center_horizontal"
         android:textColor="@color/commonWhite"
         android:textSize="60sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text='@{now.temperature+@string/tem}'/>
-
+</RelativeLayout>
 
 </LinearLayout>
 </layout>

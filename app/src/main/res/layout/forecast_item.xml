@@ -29,6 +29,7 @@
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
         android:gravity="center"
+        android:drawableRight="@{forecast.more.code_d}"
         android:text="@{forecast.more.info}"
         android:textColor="@color/commonWhite"/>
     <TextView
